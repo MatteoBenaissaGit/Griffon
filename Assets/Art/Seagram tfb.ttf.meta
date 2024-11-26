@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 871f074c0b7dcac4684e3f8ef3fb30d4
+guid: c1e89588812b8224288946113f95f15b
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Ancient
+  - Seagram tfb
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

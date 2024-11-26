@@ -17,6 +17,8 @@ namespace DefaultNamespace
         {
             _cards.Add(card);
             PlaceAllCards();
+
+            card.CanBePreviewed = true;
         }
 
         private void PlaceAllCards()

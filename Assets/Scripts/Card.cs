@@ -10,6 +10,8 @@ public class Card : MonoBehaviour
     [SerializeField] private SpriteRenderer _cardFeedback;
     [SerializeField] private Color _feedbackColor;
 
+    public bool CanBePreviewed { get; set; }
+    
     private bool _canBeSelected = false;
     private Action _onSelectedAction;
 
@@ -43,6 +45,7 @@ public class Card : MonoBehaviour
     {
         SetFeedback(false, 0);
         _canBeSelected = false;
+        GameManager.Instance.UI.SetPreview(false);
         
         _onSelectedAction?.Invoke();
     }
@@ -53,6 +56,11 @@ public class Card : MonoBehaviour
         {
             SetFeedback(true, 0f);
         }
+
+        if (CanBePreviewed)
+        {
+            GameManager.Instance.UI.SetPreview(true);
+        }
     }
 
     private void OnMouseExit()
@@ -60,6 +68,11 @@ public class Card : MonoBehaviour
         if (_canBeSelected)
         {
             SetFeedback(false, 0f);
+        }
+        
+        if (CanBePreviewed)
+        {
+            GameManager.Instance.UI.SetPreview(false);
         }
     }
 

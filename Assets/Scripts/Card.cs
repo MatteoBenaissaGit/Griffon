@@ -1,4 +1,5 @@
 using System;
+using Data;
 using DG.Tweening;
 using UnityEngine;
 
@@ -8,9 +9,14 @@ public class Card : MonoBehaviour
     [SerializeField] private SpriteRenderer _cardFront;
     [SerializeField] private SpriteRenderer _cardShadow;
     [SerializeField] private SpriteRenderer _cardFeedback;
+    [SerializeField] private SpriteRenderer _consumptionSprite;
+    [SerializeField] private SpriteRenderer _badHabitSprite;
+    [SerializeField] private SpriteRenderer _secondBadHabitSprite;
+    [SerializeField] private SpriteRenderer _characterSprite;
     [SerializeField] private Color _feedbackColor;
 
     public bool CanBePreviewed { get; set; }
+    public CardData Data { get; private set; }
     
     private bool _canBeSelected = false;
     private Action _onSelectedAction;
@@ -18,6 +24,22 @@ public class Card : MonoBehaviour
     private void Awake()
     {
         SetFeedback(false, 0);
+    }
+
+    public void Initialize(CardData data)
+    {
+        Data = data;
+        
+        _consumptionSprite.sprite = GameManager.Instance.SpritesData.GetConsumptionSprite(Data.Consumption);
+        _badHabitSprite.sprite = GameManager.Instance.SpritesData.GetBadHabitSprite(Data.BadHabit);
+        if (Data.BadHabitAmount > 1)
+        {
+            _secondBadHabitSprite.sprite = GameManager.Instance.SpritesData.GetBadHabitSprite(Data.BadHabit);
+        }
+        else
+        {
+            _secondBadHabitSprite.gameObject.SetActive(false);
+        }
     }
 
     public void SetSelectable(Action onSelectedAction)
@@ -36,8 +58,12 @@ public class Card : MonoBehaviour
     {
         order *= 10;
         
-        _cardFront.sortingOrder = 2 + order;
         _cardFeedback.sortingOrder = 100 + order;
+        _cardFront.sortingOrder = 2 + order;
+        _consumptionSprite.sortingOrder = 3 + order;
+        _badHabitSprite.sortingOrder = 4 + order;
+        _secondBadHabitSprite.sortingOrder = 3 + order;
+        _characterSprite.sortingOrder = 3 + order;
         _cardShadow.sortingOrder = 0 + order;
     }
 
@@ -45,7 +71,7 @@ public class Card : MonoBehaviour
     {
         SetFeedback(false, 0);
         _canBeSelected = false;
-        GameManager.Instance.UI.SetPreview(false);
+        GameManager.Instance.UI.SetPreview(false, Data);
         
         _onSelectedAction?.Invoke();
     }
@@ -59,7 +85,7 @@ public class Card : MonoBehaviour
 
         if (CanBePreviewed)
         {
-            GameManager.Instance.UI.SetPreview(true);
+            GameManager.Instance.UI.SetPreview(true, Data);
         }
     }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using DG.Tweening;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class Tank : MonoBehaviour
     [SerializeField] private float _cardsHeightDifference = 1f;
 
     private Queue<Card> _tank = new();
-    
+
     public void AddCardInTank(Card card)
     {
         _tank.Enqueue(card);

@@ -317,6 +317,7 @@ MonoBehaviour:
   _gameStateText: {fileID: 1661428951}
   _previewCanvasGroup: {fileID: 730053706}
   _previewNameText: {fileID: 1056606052}
+  _spriteImage: {fileID: 1966865586}
   _consumptionImage: {fileID: 1393050686}
   _badHabitImage: {fileID: 1388721387}
   _secondBadHabitImage: {fileID: 1050182420}

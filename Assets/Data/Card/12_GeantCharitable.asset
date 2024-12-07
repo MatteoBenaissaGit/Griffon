@@ -13,5 +13,15 @@ MonoBehaviour:
   m_Name: 12_GeantCharitable
   m_EditorClassIdentifier: 
   <Name>k__BackingField: "Le G\xE9ant Charitable"
+  <Sprite>k__BackingField: {fileID: 21300000, guid: e3e7af598cd748e45b69331eb3aa9a8c, type: 3}
   <Consumption>k__BackingField: 1
   <BadHabit>k__BackingField: 2
+  <BadHabitAmount>k__BackingField: 1
+  <HostelConditions>k__BackingField:
+  - <Type>k__BackingField: 6
+    <Operator>k__BackingField: 3
+    <Value>k__BackingField: 2
+  - <Type>k__BackingField: 3
+    <Operator>k__BackingField: 3
+    <Value>k__BackingField: 3
+  <BarCondition>k__BackingField: 3

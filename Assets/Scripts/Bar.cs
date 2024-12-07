@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Data;
 using DG.Tweening;
 using UnityEngine;
 
@@ -19,6 +20,37 @@ namespace DefaultNamespace
             PlaceAllCards();
 
             card.CanBePreviewed = true;
+            
+            int loudAmount = 0;
+            int smellAmount = 0;
+            int fightAmount = 0;
+            foreach (Card c in _cards)
+            {
+                switch (c.Data.BadHabit)
+                {
+                    case BadHabitType.Loud:
+                        loudAmount += c.Data.BadHabitAmount;
+                        break;
+                    case BadHabitType.Smell:
+                        smellAmount += c.Data.BadHabitAmount;
+                        break;
+                    case BadHabitType.Fight:
+                        fightAmount += c.Data.BadHabitAmount;
+                        break;
+                }
+            }
+            if (loudAmount >= 3)
+            {
+                GameManager.Instance.CheckBarConditionsFor(BadHabitType.Loud);
+            }
+            if (smellAmount >= 3)
+            {
+                GameManager.Instance.CheckBarConditionsFor(BadHabitType.Smell);
+            }
+            if (fightAmount >= 3)
+            {
+                GameManager.Instance.CheckBarConditionsFor(BadHabitType.Fight);
+            }
         }
 
         private void PlaceAllCards()

@@ -40,6 +40,8 @@ public class Card : MonoBehaviour
         {
             _secondBadHabitSprite.gameObject.SetActive(false);
         }
+
+        _characterSprite.sprite = Data.Sprite;
     }
 
     public void SetSelectable(Action onSelectedAction)
@@ -106,5 +108,17 @@ public class Card : MonoBehaviour
     {
         _cardFeedback.DOKill();
         _cardFeedback.DOColor(doShow ? _feedbackColor : new Color(_feedbackColor.r, _feedbackColor.g, _feedbackColor.b, 0f), time);
+    }
+
+    public void LeaveFromHostel()
+    {
+        _canBeSelected = false;
+        _onSelectedAction = null;
+        SetFeedback(false, 0);
+        
+        transform.DOMoveX(transform.position.x + 5, 0.5f).SetEase(Ease.OutSine).OnComplete(() =>
+        {
+            Destroy(gameObject);
+        });
     }
 }

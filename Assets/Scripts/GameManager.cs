@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 
     private async void Start()
     {
+        if (_currentTask != null) await _currentTask;
+        
         await FillTank();
         await Task.Delay(1000);
         await SetBarTurn();
@@ -37,6 +39,8 @@ public class GameManager : MonoBehaviour
 
     private async Task FillTank()
     {
+        if (_currentTask != null) await _currentTask;
+        
         UI.SetGameStateText("Les clients arrivent");
 
         Common.Shuffle(_cardsInTank);
@@ -54,6 +58,8 @@ public class GameManager : MonoBehaviour
 
     private async Task SetBarTurn()
     {
+        if (_currentTask != null) await _currentTask;
+        
         UI.SetGameStateText("Choisissez un client");
         
         while (CardBar.IsFull == false && Tank.ExtractCardFromTank(out Card card))
@@ -66,11 +72,20 @@ public class GameManager : MonoBehaviour
 
     public async void EndHostelTurn()
     {
+        if (_currentTask != null) await _currentTask;
+        
         await SetBarTurn();
     }
 
     public void StartHostelTurn()
     {
         UI.SetGameStateText("Vont-ils s'entendre ?");
+    }
+
+    private Task _currentTask = null;
+    public async void CheckBarConditionsFor(BadHabitType badHabit)
+    {
+        _currentTask = CardHostel.CheckCardsBarConditions(badHabit);
+        await _currentTask;
     }
 }

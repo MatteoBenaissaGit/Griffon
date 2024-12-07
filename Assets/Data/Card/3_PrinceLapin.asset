@@ -13,5 +13,12 @@ MonoBehaviour:
   m_Name: 3_PrinceLapin
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Le Prince Lapin
+  <Sprite>k__BackingField: {fileID: 21300000, guid: acf9ba7316513474a84033fa74b0985f, type: 3}
   <Consumption>k__BackingField: 0
   <BadHabit>k__BackingField: 1
+  <BadHabitAmount>k__BackingField: 1
+  <HostelConditions>k__BackingField:
+  - <Type>k__BackingField: 11
+    <Operator>k__BackingField: 4
+    <Value>k__BackingField: 0
+  <BarCondition>k__BackingField: 2

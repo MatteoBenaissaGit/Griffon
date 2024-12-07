@@ -13,5 +13,12 @@ MonoBehaviour:
   m_Name: 4_DoppelgangerIndecis
   m_EditorClassIdentifier: 
   <Name>k__BackingField: "Le Doppelganger Ind\xE9cis"
+  <Sprite>k__BackingField: {fileID: 21300000, guid: c7796cb8b690697479f8da93f5412ff5, type: 3}
   <Consumption>k__BackingField: 0
   <BadHabit>k__BackingField: 0
+  <BadHabitAmount>k__BackingField: 1
+  <HostelConditions>k__BackingField:
+  - <Type>k__BackingField: 3
+    <Operator>k__BackingField: 3
+    <Value>k__BackingField: 4
+  <BarCondition>k__BackingField: 3

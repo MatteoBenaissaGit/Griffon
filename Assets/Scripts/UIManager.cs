@@ -12,6 +12,7 @@ namespace DefaultNamespace
         [SerializeField] private TMP_Text _gameStateText;
         [SerializeField] private CanvasGroup _previewCanvasGroup;
         [SerializeField] private TMP_Text _previewNameText;
+        [SerializeField] private Image _spriteImage;
         [SerializeField] private Image _consumptionImage;
         [SerializeField] private Image _badHabitImage;
         [SerializeField] private Image _secondBadHabitImage;
@@ -34,6 +35,8 @@ namespace DefaultNamespace
             _previewCanvasGroup.DOFade(doShow ? 1 : 0, 0.2f);
 
             if (doShow == false || data == null) return;
+
+            _spriteImage.sprite = data.Sprite;
             
             _previewNameText.text = data.Name;
             _badHabitImage.sprite = GameManager.Instance.SpritesData.GetBadHabitSprite(data.BadHabit);

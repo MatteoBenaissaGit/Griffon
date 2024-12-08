@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     {
         if (_currentTask != null) await _currentTask;
         
-        UI.SetGameStateText("Les clients arrivent");
+        UI.SetGameStateText("Clients are coming in");
 
         Common.Shuffle(_cardsInTank);
         foreach (CardData cardData in _cardsInTank)
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
     {
         if (_currentTask != null) await _currentTask;
         
-        UI.SetGameStateText("Choisissez un client");
+        UI.SetGameStateText("Choose a client");
         
         while (CardBar.IsFull == false && Tank.ExtractCardFromTank(out Card card))
         {
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
 
     public void StartHostelTurn()
     {
-        UI.SetGameStateText("Vont-ils s'entendre ?");
+        UI.SetGameStateText("Will they go along ?");
     }
 
     private Task _currentTask = null;

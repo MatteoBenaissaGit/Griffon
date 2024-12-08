@@ -17,6 +17,10 @@ namespace DefaultNamespace
         [SerializeField] private Image _badHabitImage;
         [SerializeField] private Image _secondBadHabitImage;
 
+        [SerializeField] private TMP_Text _hostelConditions;
+        [SerializeField] private TMP_Text _barConditionText;
+        [SerializeField] private Image _barConditionImage;
+
         private void Start()
         {
             _previewCanvasGroup.alpha = 0;
@@ -50,6 +54,80 @@ namespace DefaultNamespace
                 _secondBadHabitImage.gameObject.SetActive(false);
             }
             _consumptionImage.sprite = GameManager.Instance.SpritesData.GetConsumptionSprite(data.Consumption);
+
+            if (data.BarCondition != BadHabitType.None)
+            {
+                _barConditionText.gameObject.SetActive(true);
+                _barConditionImage.gameObject.SetActive(true);
+                _barConditionImage.sprite = GameManager.Instance.SpritesData.GetBadHabitSprite(data.BarCondition);
+            }
+            else
+            {
+                _barConditionText.gameObject.SetActive(false);
+                _barConditionImage.gameObject.SetActive(false);
+            }
+            
+            string hostelConditions = string.Empty;
+            foreach (var condition in data.HostelConditions)
+            {
+                if (condition.Type == ConditionType.DrinkComparedToFoodInHostel || condition.Type == ConditionType.DrinkComparedToFoodOnBar)
+                {
+                    string place = condition.Type == ConditionType.DrinkComparedToFoodInHostel ? "hostel" : "bar";
+                    if (condition.Operator == Operator.Less)
+                    {
+                        hostelConditions += $"Less drink than food in {place}\n";
+                    }
+                    else if (condition.Operator == Operator.Greater)
+                    {
+                        hostelConditions += $"More drink than food in {place}\n";
+                    }
+                    else if (condition.Operator == Operator.Equal)
+                    {
+                        hostelConditions += $"Equal drink and food in {place}\n";
+                    }
+                    continue;
+                }
+                hostelConditions += $"{GetStringForCondition(condition.Type)} {GetStringForOperator(condition.Operator)} {condition.Value}\n";
+            }
+            _hostelConditions.text = hostelConditions;
+        }
+
+        private static string GetStringForCondition(ConditionType condition)
+        {
+            return condition switch
+            {
+                ConditionType.DrinkOnBar => "Drinks in bar",
+                ConditionType.FoodOnBar => "Foods in bar",
+                ConditionType.DrinkInHostel => "Drinks in hostel",
+                ConditionType.FoodInHostel => "Foods in hostel",
+                ConditionType.GoblinInHostel => "Goblins in hostel",
+                ConditionType.DrinkUpOrDown => "Drinks in neighbor rooms",
+                ConditionType.DrinkUpAndDown => "Drinks in both neighbor rooms",
+                ConditionType.FoodUpOrDown => "Foods in neighbor rooms",
+                ConditionType.FoodUpAndDown => "Foods in both neighbor rooms",
+                ConditionType.LoudUpAndDown => "Noise in both neighbor rooms",
+                ConditionType.LoudUpOrDown => "Noise in neighbor rooms",
+                ConditionType.DrinkComparedToFoodInHostel => "Drink compared to food in hostel",
+                ConditionType.DrinkComparedToFoodOnBar => "Drink compared to food in bar",
+                ConditionType.FloorInHostel => "Hostel floor",
+                _ => throw new ArgumentOutOfRangeException(nameof(condition), condition, null)
+            };
+        }
+        
+        private static string GetStringForOperator(Operator @operator)
+        {
+            return @operator switch
+            {
+                Operator.Less => "<",
+                Operator.LessOrEqual => "<=",
+                Operator.Equal => "==",
+                Operator.GreaterOrEqual => ">=",
+                Operator.Greater => ">",
+                Operator.First => "is first",
+                Operator.BeforeLast => "is pre-last",
+                Operator.Last => "is last",
+                _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, null)
+            };
         }
     }
 }

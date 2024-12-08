@@ -12,6 +12,7 @@ namespace DefaultNamespace
         public const int Capacity = 4;
         public bool IsFull => _cards.Count >= Capacity;
 
+        public List<Card> Cards => _cards;
         private List<Card> _cards = new();
         
         public void AddCard(Card card)
@@ -58,7 +59,7 @@ namespace DefaultNamespace
             for (int i = 0; i < _cards.Count; i++)
             {
                 Vector3 position = transform.position + Vector3.right * i * _cardsWidthDifference;
-                _cards[i].transform.DOKill();
+                _cards[i].transform.DOComplete();
                 _cards[i].transform.DOMove(position, 0.5f).SetEase(Ease.OutSine);
             }
         }

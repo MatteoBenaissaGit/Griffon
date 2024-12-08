@@ -35,7 +35,7 @@ public class Tank : MonoBehaviour
         card.SetOrderInLayer(count);
         
         card.transform.parent = transform;
-        card.transform.DOKill();
+        card.transform.DOComplete();
         card.transform.DOMove(position, 0.5f).SetEase(Ease.OutSine);
     }
 

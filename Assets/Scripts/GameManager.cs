@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<CardData> _cardsInTank = new();
 
+    public bool CanPlayerMakeAction { get; set; } = false;
+
     private async void Start()
     {
         if (_currentTask != null) await _currentTask;
@@ -35,6 +37,8 @@ public class GameManager : MonoBehaviour
         await FillTank();
         await Task.Delay(1000);
         await SetBarTurn();
+
+        CanPlayerMakeAction = true;
     }
 
     private async Task FillTank()
@@ -52,7 +56,7 @@ public class GameManager : MonoBehaviour
             card.Initialize(cardData);
             Tank.AddCardInTank(card);
             
-            await Task.Delay(150);
+            await Task.Delay(100);
         }
     }
 
@@ -60,6 +64,8 @@ public class GameManager : MonoBehaviour
     {
         if (_currentTask != null) await _currentTask;
         
+        CanPlayerMakeAction = false;
+
         UI.SetGameStateText("Choose a client");
         
         while (CardBar.IsFull == false && Tank.ExtractCardFromTank(out Card card))
@@ -68,6 +74,8 @@ public class GameManager : MonoBehaviour
             await Task.Delay(300);
         }
         CardBar.StartBarTurn();
+        
+        CanPlayerMakeAction = true;
     }
 
     public async void EndHostelTurn()
@@ -85,7 +93,11 @@ public class GameManager : MonoBehaviour
     private Task _currentTask = null;
     public async void CheckBarConditionsFor(BadHabitType badHabit)
     {
+        CanPlayerMakeAction = false;
+
         _currentTask = CardHostel.CheckCardsBarConditions(badHabit);
         await _currentTask;
+        
+        CanPlayerMakeAction = true;
     }
 }

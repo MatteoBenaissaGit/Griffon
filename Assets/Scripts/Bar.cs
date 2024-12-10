@@ -21,7 +21,10 @@ namespace DefaultNamespace
             PlaceAllCards();
 
             card.CanBePreviewed = true;
-            
+
+            List<Card> loud = new();
+            List<Card> smell = new();
+            List<Card> fight = new();
             int loudAmount = 0;
             int smellAmount = 0;
             int fightAmount = 0;
@@ -31,25 +34,31 @@ namespace DefaultNamespace
                 {
                     case BadHabitType.Loud:
                         loudAmount += c.Data.BadHabitAmount;
+                        loud.Add(c);
                         break;
                     case BadHabitType.Smell:
+                        smell.Add(c);
                         smellAmount += c.Data.BadHabitAmount;
                         break;
                     case BadHabitType.Fight:
+                        fight.Add(c);
                         fightAmount += c.Data.BadHabitAmount;
                         break;
                 }
             }
             if (loudAmount >= 3)
             {
+                loud.ForEach(x => x.MakeBadHabitFeedback());
                 GameManager.Instance.CheckBarConditionsFor(BadHabitType.Loud);
             }
             if (smellAmount >= 3)
             {
+                smell.ForEach(x => x.MakeBadHabitFeedback());
                 GameManager.Instance.CheckBarConditionsFor(BadHabitType.Smell);
             }
             if (fightAmount >= 3)
             {
+                fight.ForEach(x => x.MakeBadHabitFeedback());
                 GameManager.Instance.CheckBarConditionsFor(BadHabitType.Fight);
             }
         }
@@ -60,7 +69,7 @@ namespace DefaultNamespace
             {
                 Vector3 position = transform.position + Vector3.right * i * _cardsWidthDifference;
                 _cards[i].transform.DOComplete();
-                _cards[i].transform.DOMove(position, 0.5f).SetEase(Ease.OutSine);
+                _cards[i].transform.DOMove(position, 0.3f).SetEase(Ease.OutSine);
             }
         }
 

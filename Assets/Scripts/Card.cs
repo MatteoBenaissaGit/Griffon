@@ -71,6 +71,8 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (GameManager.Instance.CanPlayerMakeAction == false) return;
+        
         SetFeedback(false, 0);
         _canBeSelected = false;
         GameManager.Instance.UI.SetPreview(false, Data);
@@ -80,7 +82,7 @@ public class Card : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (_canBeSelected)
+        if (_canBeSelected && GameManager.Instance.CanPlayerMakeAction)
         {
             SetFeedback(true, 0f);
         }
@@ -110,15 +112,36 @@ public class Card : MonoBehaviour
         _cardFeedback.DOColor(doShow ? _feedbackColor : new Color(_feedbackColor.r, _feedbackColor.g, _feedbackColor.b, 0f), time);
     }
 
-    public void LeaveFromHostel()
+    public void LeaveFromHostel(bool withLeaveEffect)
     {
         _canBeSelected = false;
         _onSelectedAction = null;
         SetFeedback(false, 0);
-        
+
+        if (withLeaveEffect)
+        {
+            switch (Data.CardWhenLeave)
+            {
+                case CardLeaveEffect.GoInTank:
+                    GameManager.Instance.Tank.AddCardInTank(this);
+                    return;
+                case CardLeaveEffect.GoInBar:
+                    GameManager.Instance.CardBar.AddCard(this);
+                    return;
+            }
+        }
+
         transform.DOMoveX(transform.position.x + 5, 0.5f).SetEase(Ease.OutSine).OnComplete(() =>
         {
             Destroy(gameObject);
         });
+    }
+
+    public void MakeBadHabitFeedback()
+    {
+        _badHabitSprite.transform.DOComplete();
+        _badHabitSprite.transform.DOPunchScale(Vector3.one * 0.1f, 0.5f);
+        _secondBadHabitSprite.transform.DOComplete();
+        _secondBadHabitSprite.transform.DOPunchScale(Vector3.one * 0.1f, 0.5f);
     }
 }

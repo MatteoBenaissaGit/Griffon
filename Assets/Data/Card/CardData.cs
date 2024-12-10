@@ -56,6 +56,24 @@ namespace Data
         BeforeLast,
         Last,
     }
+
+    public enum LeaveWithCondition
+    {
+        Nobody = 0,
+        ThoseWhoDontLikeFight = 1,
+        ThoseWhoDontLikeLoud = 2,
+        ThoseWhoDontLikeSmell = 3,
+        AllGoblins = 4,
+        ClientBeneath = 5,
+        ClientBeneath2Floor = 6
+    }
+    
+    public enum CardLeaveEffect
+    {
+        Destroyed = 0,
+        GoInTank = 1,
+        GoInBar = 2,
+    }
     
     [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/CardData", order = 1)]
     public class CardData : ScriptableObject
@@ -67,5 +85,8 @@ namespace Data
         [field: SerializeField] public int BadHabitAmount { get; private set; } = 1;
         [field: SerializeField] public List<Condition> HostelConditions { get; private set; }
         [field: SerializeField] public BadHabitType BarCondition { get; private set; } = BadHabitType.None;
+        [field: Header("Leave effect"), SerializeField] public LeaveWithCondition LeaveWith { get; private set; } = LeaveWithCondition.Nobody;
+        [field: SerializeField] public bool InvokeEffectOfLeavers { get; private set; }
+        [field: SerializeField] public CardLeaveEffect CardWhenLeave { get; private set; } = CardLeaveEffect.Destroyed;
     }
 }

@@ -80,11 +80,7 @@ public class Hostel : MonoBehaviour
 
             if (ShouldCardLeaveFromHostel(_cards[i], i))
             {
-                card.LeaveFromHostel();
-                _cards.Remove(card);
-                PlaceAllCards();
-                await Task.Delay(1000);
-                await CheckCardsHostelConditions();
+                await MakeCardLeave(card, i);
                 return;
             }
             
@@ -94,6 +90,69 @@ public class Hostel : MonoBehaviour
         await Task.Delay(1000);
         
         GameManager.Instance.EndHostelTurn();
+    }
+
+    private async Task MakeCardLeave(Card card, int floor)
+    {
+        GameManager.Instance.CanPlayerMakeAction = false;
+
+        Debug.Log($"{card.Data.Name} leaved");
+
+        //apply effect
+        List<(Card cardToRemove, int floor)> toRemove = new();
+        for (int i = 0; i < _cards.Count; i++)
+        {
+            if (i == floor) continue;
+            
+            var cardInHostel = _cards[i];
+            switch (cardInHostel.Data.BarCondition)
+            {
+                case BadHabitType.Fight when card.Data.LeaveWith == LeaveWithCondition.ThoseWhoDontLikeFight:
+                case BadHabitType.Loud when card.Data.LeaveWith == LeaveWithCondition.ThoseWhoDontLikeLoud:
+                case BadHabitType.Smell when card.Data.LeaveWith == LeaveWithCondition.ThoseWhoDontLikeSmell:
+                    toRemove.Add((cardInHostel, i));
+                    break;
+            }
+
+            if (cardInHostel.Data.HostelConditions.Any(x => x.Type == ConditionType.GoblinInHostel) && card.Data.LeaveWith == LeaveWithCondition.AllGoblins)
+            {
+                toRemove.Add((cardInHostel, i));
+            }
+            if (i == floor - 1 && card.Data.LeaveWith == LeaveWithCondition.ClientBeneath)
+            {
+                toRemove.Add((cardInHostel, i));
+            }
+            if (i == floor - 2 && card.Data.LeaveWith == LeaveWithCondition.ClientBeneath2Floor)
+            {
+                toRemove.Add((cardInHostel, i));
+            }
+        }
+        
+        //remove card
+        card.LeaveFromHostel(true);
+        _cards.Remove(card);
+        PlaceAllCards();
+
+        //remove to leave cards
+        foreach ((Card cardToRemove, int floor) toRemoveCard in toRemove)
+        {
+            if (card.Data.InvokeEffectOfLeavers)
+            {
+                await MakeCardLeave(toRemoveCard.cardToRemove, toRemoveCard.floor);
+            }
+            else
+            {
+                _cards.Remove(toRemoveCard.cardToRemove);
+                toRemoveCard.cardToRemove.LeaveFromHostel(false);
+            }
+        }
+
+        //check conditions again
+        PlaceAllCards();
+        await Task.Delay(1000);
+        await CheckCardsHostelConditions();
+        
+        GameManager.Instance.CanPlayerMakeAction = true;
     }
 
     private bool ShouldCardLeaveFromHostel(Card card, int floor)
@@ -151,51 +210,69 @@ public class Hostel : MonoBehaviour
             }
         }
 
+        bool shouldLeave = false;
         foreach (var condition in card.Data.HostelConditions)
         {
             int value = condition.Value;
             switch (condition.Type)
             {
                 case ConditionType.DrinkOnBar:
-                    return IsOperatorConditionMet(amountOfDrinkInBar, condition.Operator, value);
+                    shouldLeave = IsOperatorConditionMet(amountOfDrinkInBar, condition.Operator, value); break;
                 case ConditionType.FoodOnBar:
-                    return IsOperatorConditionMet(amountOfFoodInBar, condition.Operator, value);
+                    shouldLeave = IsOperatorConditionMet(amountOfFoodInBar, condition.Operator, value); break;
                 case ConditionType.DrinkInHostel:
-                    return IsOperatorConditionMet(amountOfDrinkInHostel, condition.Operator, value);
+                    shouldLeave = IsOperatorConditionMet(amountOfDrinkInHostel, condition.Operator, value); break;
                 case ConditionType.FoodInHostel:
-                    return IsOperatorConditionMet(amountOfFoodInHostel, condition.Operator, value);
+                    shouldLeave = IsOperatorConditionMet(amountOfFoodInHostel, condition.Operator, value); break;
                 case ConditionType.GoblinInHostel:
-                    return IsOperatorConditionMet(amountOfGoblinsInHostel, condition.Operator, value);
+                    shouldLeave = IsOperatorConditionMet(amountOfGoblinsInHostel, condition.Operator, value); break;
                 case ConditionType.DrinkUpOrDown:
-                    return drinkUpsAndDowns > 0;
+                    shouldLeave = drinkUpsAndDowns > 0; break;
                 case ConditionType.DrinkUpAndDown:
-                    return drinkUpsAndDowns >= value;
+                    shouldLeave = drinkUpsAndDowns >= value; break;
                 case ConditionType.FoodUpOrDown:
-                    return foodUpsAndDowns > 0;
+                    shouldLeave = foodUpsAndDowns > 0; break;
                 case ConditionType.FoodUpAndDown:
-                    return foodUpsAndDowns >= value;
+                    shouldLeave = foodUpsAndDowns >= value; break;
                 case ConditionType.LoudUpOrDown:
-                    return loudUpsAndDowns > 0;
+                    shouldLeave = loudUpsAndDowns > 0; break;
                 case ConditionType.LoudUpAndDown:
-                    return loudUpsAndDowns >= value;
+                    shouldLeave = loudUpsAndDowns >= value; break;
                 case ConditionType.DrinkComparedToFoodInHostel:
-                    return IsOperatorConditionMet(amountOfDrinkInHostel, condition.Operator, amountOfFoodInHostel);
+                    shouldLeave = IsOperatorConditionMet(amountOfDrinkInHostel, condition.Operator, amountOfFoodInHostel); break;
                 case ConditionType.DrinkComparedToFoodOnBar:
-                    return IsOperatorConditionMet(amountOfDrinkInBar, condition.Operator, amountOfFoodInBar);
+                    shouldLeave = IsOperatorConditionMet(amountOfDrinkInBar, condition.Operator, amountOfFoodInBar); break;
                 case ConditionType.FloorInHostel:
                     int floorAmount = _cards.Count;
+                    bool checkOperator = true;
                     switch (condition.Operator)
                     {
                         case Operator.First:
-                            return floor == 0;
+                            shouldLeave = floor == 0;
+                            checkOperator = false;
+                            break;
                         case Operator.BeforeLast:
-                            return floor == floorAmount - 2;
+                            checkOperator = false;
+                            shouldLeave = floor == floorAmount - 2; 
+                            break;
                         case Operator.Last:
-                            return floor == floorAmount - 1;
+                            checkOperator = false;
+                            shouldLeave = floor == floorAmount - 1; 
+                            break;
+                    }
+
+                    if (checkOperator)
+                    {
+                        shouldLeave = IsOperatorConditionMet(floor, condition.Operator, value); break;
                     }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+
+            if (shouldLeave)
+            {
+                return true;
             }
         }
 
@@ -239,10 +316,7 @@ public class Hostel : MonoBehaviour
 
             if (badHabit == card.Data.BarCondition)
             {
-                _cards.Remove(card);
-                card.LeaveFromHostel();
-                PlaceAllCards();
-                await Task.Delay(500);
+                await MakeCardLeave(card, i);
             }
         }
         

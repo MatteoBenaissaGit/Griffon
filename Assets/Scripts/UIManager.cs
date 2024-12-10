@@ -21,6 +21,8 @@ namespace DefaultNamespace
         [SerializeField] private TMP_Text _barConditionText;
         [SerializeField] private Image _barConditionImage;
 
+        [SerializeField] private TMP_Text _leaveEffect;
+        
         private void Start()
         {
             _previewCanvasGroup.alpha = 0;
@@ -90,6 +92,8 @@ namespace DefaultNamespace
                 hostelConditions += $"{GetStringForCondition(condition.Type)} {GetStringForOperator(condition.Operator)} {condition.Value}\n";
             }
             _hostelConditions.text = hostelConditions;
+            
+            _leaveEffect.text = GetLeaveEffectString(data);
         }
 
         private static string GetStringForCondition(ConditionType condition)
@@ -127,6 +131,21 @@ namespace DefaultNamespace
                 Operator.BeforeLast => "is pre-last",
                 Operator.Last => "is last",
                 _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, null)
+            };
+        }
+        
+        private static string GetLeaveEffectString(CardData data)
+        {
+            return data.LeaveWith switch
+            {
+                LeaveWithCondition.Nobody => "Leave",
+                LeaveWithCondition.AllGoblins => "Leave with all goblins",
+                LeaveWithCondition.ClientBeneath => "Make client beneath leave",
+                LeaveWithCondition.ClientBeneath2Floor => "Make client beneath 2 floor leave and activate his leave effect",
+                LeaveWithCondition.ThoseWhoDontLikeFight => "Make those who don't like fight leave",
+                LeaveWithCondition.ThoseWhoDontLikeLoud => "Make those who don't like loud leave",
+                LeaveWithCondition.ThoseWhoDontLikeSmell => "Make those who don't like smell leave",
+                _ => throw new ArgumentOutOfRangeException()
             };
         }
     }

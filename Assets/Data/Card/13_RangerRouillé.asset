@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "13_RangerRouill\xE9"
   m_EditorClassIdentifier: 
   <Name>k__BackingField: "Le Ranger Rouill\xE9"
-  <Sprite>k__BackingField: {fileID: 21300000, guid: 6798de32067907746bdfa4731112ee29, type: 3}
+  <Sprite>k__BackingField: {fileID: 21300000, guid: d8d1b06fe7d55d04a83c9d8a6826d578, type: 3}
   <Consumption>k__BackingField: 1
   <BadHabit>k__BackingField: 0
   <BadHabitAmount>k__BackingField: 1

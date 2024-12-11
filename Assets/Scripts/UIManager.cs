@@ -145,6 +145,13 @@ namespace DefaultNamespace
                 LeaveWithCondition.ThoseWhoDontLikeFight => "Make those who don't like fight leave",
                 LeaveWithCondition.ThoseWhoDontLikeLoud => "Make those who don't like loud leave",
                 LeaveWithCondition.ThoseWhoDontLikeSmell => "Make those who don't like smell leave",
+                LeaveWithCondition.DrawCardFromTankAndSwitch => "Take client from tank and switch it with this client",
+                LeaveWithCondition.Take3ClientBeneathAndReplaceThem => "Take the 3 clients beneath and replace them",
+                LeaveWithCondition.ShuffleBarAndPlaceBackToTank => "Shuffle bar clients and place back to tank",
+                LeaveWithCondition.DrawFromTankToTopOfHostel => "Draw client from tank to top of hostel",
+                LeaveWithCondition.DrawFromBarToTopOfHostel => "Draw client from bar to top of hostel",
+                LeaveWithCondition.DrawFirstInBarToCardHostelFlor => "Draw first client in bar to card hostel floor",
+                LeaveWithCondition.DestroyNextCardInTank => "Make next client in tank leave",
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

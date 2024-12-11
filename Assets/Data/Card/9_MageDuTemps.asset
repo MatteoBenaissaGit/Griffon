@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 9_MageDuTemps
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Le Mage du Temps
-  <Sprite>k__BackingField: {fileID: 21300000, guid: 6b4bd1b8366703e4685110083a080dc1, type: 3}
+  <Sprite>k__BackingField: {fileID: 21300000, guid: 4d49b42ee6ec5454eb7f49ebe90bc125, type: 3}
   <Consumption>k__BackingField: 1
   <BadHabit>k__BackingField: 2
   <BadHabitAmount>k__BackingField: 1
@@ -22,3 +22,6 @@ MonoBehaviour:
     <Operator>k__BackingField: 2
     <Value>k__BackingField: 0
   <BarCondition>k__BackingField: 3
+  <LeaveWith>k__BackingField: 9
+  <InvokeEffectOfLeavers>k__BackingField: 0
+  <CardWhenLeave>k__BackingField: 0

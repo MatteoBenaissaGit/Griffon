@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Data;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -10,11 +10,24 @@ public class Tank : MonoBehaviour
 
     private Queue<Card> _tank = new();
 
-    public void AddCardInTank(Card card)
+    public void AddCardInTank(Card card, bool atRandomPosition = false)
     {
-        _tank.Enqueue(card);
-        card.transform.position = _tankStartPoint.position + Vector3.up * 20f;
-        PlaceCardInTank(card, _tank.Count);
+        card.CanBePreviewed = false;
+        
+        if (atRandomPosition)
+        {
+            var list = _tank.ToList();
+            list.Insert(Random.Range(0, list.Count), card);
+            _tank = new Queue<Card>(list);
+        }
+        else
+        {
+            _tank.Enqueue(card);
+            card.transform.position = _tankStartPoint.position + Vector3.up * 20f;
+            PlaceCardInTank(card, _tank.Count);
+        }
+        
+        PlaceAllCards();
     }
 
     public bool ExtractCardFromTank(out Card card)
@@ -47,5 +60,28 @@ public class Tank : MonoBehaviour
             PlaceCardInTank(card, count);
             count++;
         }
+    }
+
+    public void RemoveCard(Card card)
+    {
+        List<Card> list = _tank.ToList();
+        list.Remove(card);
+        _tank = new Queue<Card>(list);
+        
+        PlaceAllCards();
+    }
+    
+    public Card GetRandomCard()
+    {
+        return _tank.ElementAt(Random.Range(0, _tank.Count));
+    }
+    
+    public void PlaceCardInHostel(Card cardInHostel, Hostel hostel)
+    {
+        RemoveCard(cardInHostel);
+        
+        PlaceAllCards();
+            
+        hostel.AddCard(cardInHostel);
     }
 }

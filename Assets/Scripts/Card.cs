@@ -137,6 +137,14 @@ public class Card : MonoBehaviour
         });
     }
 
+    public void LeaveFromTank()
+    {
+        transform.DOMoveX(transform.position.x - 5, 0.5f).SetEase(Ease.OutSine).OnComplete(() =>
+        {
+            Destroy(gameObject);
+        });
+    }
+    
     public void MakeBadHabitFeedback()
     {
         _badHabitSprite.transform.DOComplete();

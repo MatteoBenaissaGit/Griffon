@@ -22,3 +22,6 @@ MonoBehaviour:
     <Operator>k__BackingField: 3
     <Value>k__BackingField: 4
   <BarCondition>k__BackingField: 3
+  <LeaveWith>k__BackingField: 7
+  <InvokeEffectOfLeavers>k__BackingField: 0
+  <CardWhenLeave>k__BackingField: 0

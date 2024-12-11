@@ -98,7 +98,7 @@ public class Hostel : MonoBehaviour
 
         Debug.Log($"{card.Data.Name} leaved");
 
-        //apply effect
+        //apply effect that make other leaves
         List<(Card cardToRemove, int floor)> toRemove = new();
         for (int i = 0; i < _cards.Count; i++)
         {
@@ -113,7 +113,6 @@ public class Hostel : MonoBehaviour
                     toRemove.Add((cardInHostel, i));
                     break;
             }
-
             if (cardInHostel.Data.HostelConditions.Any(x => x.Type == ConditionType.GoblinInHostel) && card.Data.LeaveWith == LeaveWithCondition.AllGoblins)
             {
                 toRemove.Add((cardInHostel, i));
@@ -128,8 +127,72 @@ public class Hostel : MonoBehaviour
             }
         }
         
+        //other effects
+        var tank = GameManager.Instance.Tank;
+        var bar = GameManager.Instance.CardBar;
+        bool cancelLeave = false;
+        switch (card.Data.LeaveWith)
+        {
+            case LeaveWithCondition.DrawCardFromTankAndSwitch:
+                //get from tank in hostel
+                var c1 = tank.GetRandomCard();
+                tank.RemoveCard(c1);
+                c1.CanBePreviewed = true;
+                AddCardAtPosition(c1,floor+1);
+                //this one goes in tank
+                cancelLeave = true;
+                tank.AddCardInTank(card);
+                await Task.Delay(1000);
+                break;
+            case LeaveWithCondition.Take3ClientBeneathAndReplaceThem:
+                //get 3 cards beneath
+                List<Card> beneathCards = new();
+                for (int i = floor - 1; i >= 0; i--)
+                {
+                    beneathCards.Add(_cards[i]);
+                    if (beneathCards.Count == 3)
+                    {
+                        break;
+                    }
+                }
+                //shuffle and replace
+                await Task.Delay(1000);
+                break;
+            case LeaveWithCondition.ShuffleBarAndPlaceBackToTank:
+                bar.PlaceBackAllCardsInTank();
+                await Task.Delay(1000);
+                break;
+            case LeaveWithCondition.DrawFromTankToTopOfHostel:
+                var c2 = tank.GetRandomCard();
+                c2.CanBePreviewed = true;
+                tank.PlaceCardInHostel(c2, this);
+                await Task.Delay(1000);
+                break;
+            case LeaveWithCondition.DrawFromBarToTopOfHostel:
+                var c3 = bar.GetRandomCard();
+                bar.PlaceCardInHostel(c3, this);
+                await Task.Delay(1000);
+                break;
+            case LeaveWithCondition.DrawFirstInBarToCardHostelFlor:
+                var c4 = bar.GetFirstCard();
+                bar.RemoveCard(c4);
+                AddCardAtPosition(c4, floor+1);
+                await Task.Delay(1000);
+                break;
+            case LeaveWithCondition.DestroyNextCardInTank:
+                if (tank.ExtractCardFromTank(out Card c5))
+                {
+                    c5.LeaveFromTank();
+                }
+                await Task.Delay(1000);
+                break;
+        }
+
         //remove card
-        card.LeaveFromHostel(true);
+        if (cancelLeave == false)
+        {
+            card.LeaveFromHostel(true);
+        }
         _cards.Remove(card);
         PlaceAllCards();
 
@@ -153,6 +216,12 @@ public class Hostel : MonoBehaviour
         await CheckCardsHostelConditions();
         
         GameManager.Instance.CanPlayerMakeAction = true;
+    }
+
+    private void AddCardAtPosition(Card card, int floor)
+    {
+        _cards.Insert(floor, card);
+        PlaceAllCards();
     }
 
     private bool ShouldCardLeaveFromHostel(Card card, int floor)
@@ -263,7 +332,7 @@ public class Hostel : MonoBehaviour
 
                     if (checkOperator)
                     {
-                        shouldLeave = IsOperatorConditionMet(floor, condition.Operator, value); break;
+                        shouldLeave = IsOperatorConditionMet(floor+1, condition.Operator, value); break;
                     }
                     break;
                 default:

@@ -97,5 +97,22 @@ namespace DefaultNamespace
             
             hostel.AddCard(cardInHostel);
         }
+        
+        public void PlaceBackAllCardsInTank()
+        {
+            foreach (Card card in _cards)
+            {
+                GameManager.Instance.Tank.AddCardInTank(card, true);
+            }
+            _cards.Clear();
+        }
+
+        public Card GetRandomCard() => _cards[Random.Range(0, _cards.Count)];
+        public Card GetFirstCard() => _cards[0];
+
+        public void RemoveCard(Card cardToRemove)
+        {
+            _cards.Remove(cardToRemove);
+        }
     }
 }

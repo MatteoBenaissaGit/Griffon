@@ -65,7 +65,14 @@ namespace Data
         ThoseWhoDontLikeSmell = 3,
         AllGoblins = 4,
         ClientBeneath = 5,
-        ClientBeneath2Floor = 6
+        ClientBeneath2Floor = 6,
+        DrawCardFromTankAndSwitch = 7,
+        Take3ClientBeneathAndReplaceThem = 8,
+        ShuffleBarAndPlaceBackToTank = 9,
+        DrawFromTankToTopOfHostel = 10,
+        DrawFromBarToTopOfHostel = 11,
+        DrawFirstInBarToCardHostelFlor = 12,
+        DestroyNextCardInTank = 13
     }
     
     public enum CardLeaveEffect
@@ -74,7 +81,7 @@ namespace Data
         GoInTank = 1,
         GoInBar = 2,
     }
-    
+
     [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/CardData", order = 1)]
     public class CardData : ScriptableObject
     {

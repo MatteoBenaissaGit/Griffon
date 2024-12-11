@@ -20,8 +20,8 @@ public class Card : MonoBehaviour
     
     private bool _canBeSelected = false;
     private Action _onSelectedAction;
-
-    private void Awake()
+    
+    private void Start()
     {
         SetFeedback(false, 0);
     }
@@ -52,7 +52,6 @@ public class Card : MonoBehaviour
 
     public void SetUnselectable()
     {
-        _onSelectedAction = null;
         _canBeSelected = false;
     }
     
@@ -74,9 +73,10 @@ public class Card : MonoBehaviour
         if (GameManager.Instance.CanPlayerMakeAction == false) return;
         
         SetFeedback(false, 0);
-        _canBeSelected = false;
         GameManager.Instance.UI.SetPreview(false, Data);
-        
+
+        if (_canBeSelected == false) return;
+        _canBeSelected = false;
         _onSelectedAction?.Invoke();
     }
 
@@ -87,7 +87,7 @@ public class Card : MonoBehaviour
             SetFeedback(true, 0f);
         }
 
-        if (CanBePreviewed)
+        if (CanBePreviewed && GameManager.Instance.CanPlayerMakeAction)
         {
             GameManager.Instance.UI.SetPreview(true, Data);
         }

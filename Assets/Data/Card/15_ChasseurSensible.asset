@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 15_ChasseurSensible
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Le Chasseur Sensible
-  <Sprite>k__BackingField: {fileID: 21300000, guid: 2a8b8e7a05232854196623c1df6fb7ac, type: 3}
+  <Sprite>k__BackingField: {fileID: 21300000, guid: 395e0289aed5b3845843865ad98ab59c, type: 3}
   <Consumption>k__BackingField: 1
   <BadHabit>k__BackingField: 1
   <BadHabitAmount>k__BackingField: 1

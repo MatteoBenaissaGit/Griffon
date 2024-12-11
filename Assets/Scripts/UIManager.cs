@@ -12,6 +12,7 @@ namespace DefaultNamespace
         [SerializeField] private TMP_Text _gameStateText;
         [SerializeField] private CanvasGroup _previewCanvasGroup;
         [SerializeField] private TMP_Text _previewNameText;
+        [SerializeField] private Image _backgroundImage;
         [SerializeField] private Image _spriteImage;
         [SerializeField] private Image _consumptionImage;
         [SerializeField] private Image _badHabitImage;
@@ -35,6 +36,13 @@ namespace DefaultNamespace
             _gameStateText.text = text;
         }
 
+        public void SetPreview(bool doShow, CardData data, Color color)
+        {
+            _backgroundImage.color = color;
+            
+            SetPreview(doShow, data);
+        }
+        
         public void SetPreview(bool doShow, CardData data = null)
         {
             _previewCanvasGroup.DOKill();

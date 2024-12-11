@@ -81,7 +81,7 @@ public class Hostel : MonoBehaviour
             if (ShouldCardLeaveFromHostel(_cards[i], i))
             {
                 await MakeCardLeave(card, i);
-                return;
+                break;
             }
             
             await Task.Delay(100);
@@ -89,12 +89,16 @@ public class Hostel : MonoBehaviour
         
         await Task.Delay(1000);
         
+        Debug.Log("end hostel");
         GameManager.Instance.EndHostelTurn();
     }
 
     private async Task MakeCardLeave(Card card, int floor)
     {
+        GameManager.Instance.UI.SetPreview(true, card.Data, Color.red);
         GameManager.Instance.CanPlayerMakeAction = false;
+        Debug.Log("false");
+        await Task.Delay(1000);
 
         Debug.Log($"{card.Data.Name} leaved");
 
@@ -156,6 +160,13 @@ public class Hostel : MonoBehaviour
                     }
                 }
                 //shuffle and replace
+                Common.Shuffle(beneathCards);
+                for (int i = 0; i < beneathCards.Count; i++)
+                {
+                    var cReplace = beneathCards[i];
+                    _cards.Remove(cReplace);
+                    AddCardAtPosition(cReplace, floor - i);
+                }
                 await Task.Delay(1000);
                 break;
             case LeaveWithCondition.ShuffleBarAndPlaceBackToTank:
@@ -213,13 +224,19 @@ public class Hostel : MonoBehaviour
         //check conditions again
         PlaceAllCards();
         await Task.Delay(1000);
-        await CheckCardsHostelConditions();
-        
+
         GameManager.Instance.CanPlayerMakeAction = true;
+        Debug.Log("true");
+        GameManager.Instance.UI.SetPreview(false, null, Color.white);
     }
 
     private void AddCardAtPosition(Card card, int floor)
     {
+        if (floor >= _cards.Count)
+        {
+            floor = _cards.Count - 1;
+        }
+        
         _cards.Insert(floor, card);
         PlaceAllCards();
     }
@@ -252,7 +269,7 @@ public class Hostel : MonoBehaviour
                 }
             }
 
-            if (card.Data.BadHabit == BadHabitType.Loud && (i == floor - 1 || i == floor + 1))
+            if (_cards[i].Data.BadHabit == BadHabitType.Loud && (i == floor - 1 || i == floor + 1))
             {
                 loudUpsAndDowns += _cards[i].Data.BadHabitAmount;
             }
@@ -386,6 +403,7 @@ public class Hostel : MonoBehaviour
             if (badHabit == card.Data.BarCondition)
             {
                 await MakeCardLeave(card, i);
+                break;
             }
         }
         

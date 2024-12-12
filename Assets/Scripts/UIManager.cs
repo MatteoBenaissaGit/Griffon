@@ -3,6 +3,7 @@ using Data;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace DefaultNamespace
@@ -11,6 +12,8 @@ namespace DefaultNamespace
     {
         [SerializeField] private TMP_Text _gameStateText;
         [SerializeField] private CanvasGroup _previewCanvasGroup;
+        [SerializeField] private CanvasGroup _endGameCanvasGroup;
+        [SerializeField] private TMP_Text _endGameText;
         [SerializeField] private TMP_Text _previewNameText;
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private Image _spriteImage;
@@ -28,12 +31,34 @@ namespace DefaultNamespace
         {
             _previewCanvasGroup.alpha = 0;
             
+            _endGameCanvasGroup.alpha = 0;
+            _endGameCanvasGroup.interactable = false;
+            _endGameCanvasGroup.blocksRaycasts = false;
+            
             SetPreview(false);
         }
 
         public void SetGameStateText(string text)
         {
             _gameStateText.text = text;
+        }
+
+        public void SetEndGame(bool doWin, bool clientLeavedTooMuch)
+        {
+            _endGameCanvasGroup.DOFade(1, 0.5f);
+            _endGameCanvasGroup.interactable = true;
+            _endGameCanvasGroup.blocksRaycasts = true;
+            
+            _endGameText.text = doWin ? "You won! 7 clients or more are in hostel" : "You lost!";
+            if (doWin == false)
+            {
+                _endGameText.text += clientLeavedTooMuch ? " Too much clients left..." : "Not enough clients in hostel...";
+            }
+        }
+        
+        public void RestartGame()
+        {
+            SceneManager.LoadScene(0);
         }
 
         public void SetPreview(bool doShow, CardData data, Color color)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Data;
 using DG.Tweening;
 using UnityEngine;
@@ -70,7 +71,7 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (GameManager.Instance.CanPlayerMakeAction == false) return;
+        if (GameManager.Instance.CanPlayerMakeAction == false || GameManager.Instance.EndGame) return;
         
         SetFeedback(false, 0);
         GameManager.Instance.UI.SetPreview(false, Data);
@@ -82,12 +83,13 @@ public class Card : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (_canBeSelected && GameManager.Instance.CanPlayerMakeAction)
+        if (GameManager.Instance.CanPlayerMakeAction == false || GameManager.Instance.EndGame) return;
+
+        if (_canBeSelected)
         {
             SetFeedback(true, 0f);
         }
-
-        if (CanBePreviewed && GameManager.Instance.CanPlayerMakeAction)
+        if (CanBePreviewed)
         {
             GameManager.Instance.UI.SetPreview(true, Data);
         }
@@ -95,6 +97,8 @@ public class Card : MonoBehaviour
 
     private void OnMouseExit()
     {
+        if (GameManager.Instance.CanPlayerMakeAction == false || GameManager.Instance.EndGame) return;
+
         if (_canBeSelected)
         {
             SetFeedback(false, 0f);
@@ -147,9 +151,13 @@ public class Card : MonoBehaviour
     
     public void MakeBadHabitFeedback()
     {
-        _badHabitSprite.transform.DOComplete();
-        _badHabitSprite.transform.DOPunchScale(Vector3.one * 0.1f, 0.5f);
-        _secondBadHabitSprite.transform.DOComplete();
-        _secondBadHabitSprite.transform.DOPunchScale(Vector3.one * 0.1f, 0.5f);
+         List<SpriteRenderer> sprites = new List<SpriteRenderer> { _badHabitSprite, _secondBadHabitSprite };
+         foreach (var sprite in sprites)
+         {
+             sprite.transform.parent.DOComplete();
+             var sequence = DOTween.Sequence();
+                sequence.Append(sprite.transform.parent.DOScale(Vector3.one * 1.2f, 0.8f).SetEase(Ease.OutSine));
+                sequence.Append(sprite.transform.parent.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutSine));
+         }
     }
 }

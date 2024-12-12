@@ -29,7 +29,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<CardData> _cardsInTank = new();
 
     public bool CanPlayerMakeAction { get; set; } = false;
-
+    public bool EndGame { get; set; }
+    public int ClientsLeave { get; private set; }
+    
     private async void Start()
     {
         if (_currentTask != null) await _currentTask;
@@ -62,6 +64,8 @@ public class GameManager : MonoBehaviour
 
     private async Task SetBarTurn()
     {
+        if (EndGame) return;
+        
         if (_currentTask != null) await _currentTask;
         
         CanPlayerMakeAction = false;
@@ -75,18 +79,30 @@ public class GameManager : MonoBehaviour
         }
         CardBar.StartBarTurn();
         
+        if (Tank.CardCount == 0)
+        {
+            UI.SetEndGame(CardHostel.CardCount >= 7, false);
+            EndGame = true;
+            CanPlayerMakeAction = false;
+            return;
+        }
+        
         CanPlayerMakeAction = true;
     }
 
     public async void EndHostelTurn()
     {
+        if (EndGame) return;
+
         if (_currentTask != null) await _currentTask;
-        
+
         await SetBarTurn();
     }
 
     public void StartHostelTurn()
     {
+        if (EndGame) return;
+
         UI.SetGameStateText("Will they go along ?");
     }
 
@@ -99,5 +115,16 @@ public class GameManager : MonoBehaviour
         await _currentTask;
         
         CanPlayerMakeAction = true;
+    }
+
+    public void AddLeaveClient()
+    {
+        ClientsLeave++;
+        if (ClientsLeave >= 8)
+        {
+            UI.SetEndGame(false, true);
+            EndGame = true;
+            CanPlayerMakeAction = false;
+        }
     }
 }

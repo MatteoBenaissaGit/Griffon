@@ -9,6 +9,7 @@ public class Tank : MonoBehaviour
     [SerializeField] private float _cardsHeightDifference = 1f;
 
     private Queue<Card> _tank = new();
+    public int CardCount => _tank.Count;
 
     public void AddCardInTank(Card card, bool atRandomPosition = false)
     {
@@ -76,12 +77,12 @@ public class Tank : MonoBehaviour
         return _tank.ElementAt(Random.Range(0, _tank.Count));
     }
     
-    public void PlaceCardInHostel(Card cardInHostel, Hostel hostel)
+    public void PlaceCardInHostel(Card cardInHostel, Hostel hostel, bool checkConditions = true)
     {
         RemoveCard(cardInHostel);
         
         PlaceAllCards();
             
-        hostel.AddCard(cardInHostel);
+        hostel.AddCard(cardInHostel, checkConditions);
     }
 }

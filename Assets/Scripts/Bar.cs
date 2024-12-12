@@ -85,7 +85,7 @@ namespace DefaultNamespace
             }
         }
 
-        public void PlaceCardInHostel(Card cardInHostel, Hostel hostel)
+        public void PlaceCardInHostel(Card cardInHostel, Hostel hostel, bool checkConditions = true)
         {
             foreach (Card card in _cards)
             {
@@ -94,8 +94,8 @@ namespace DefaultNamespace
             
             _cards.Remove(cardInHostel);
             PlaceAllCards();
-            
-            hostel.AddCard(cardInHostel);
+
+            hostel.AddCard(cardInHostel, checkConditions); 
         }
         
         public void PlaceBackAllCardsInTank()

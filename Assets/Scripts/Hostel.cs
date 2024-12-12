@@ -12,22 +12,27 @@ public class Hostel : MonoBehaviour
     [SerializeField] private Transform _hostelStartPoint;
     [SerializeField] private float _cardsHeightDifference = 1f;
 
+    public int CardCount => _cards.Count;
+    
     private List<Card> _cards = new();
     
-    public async void AddCard(Card card)
+    public async void AddCard(Card card, bool checkCondition = true)
     {
         _cards.Add(card);
         card.SetOrderInLayer(_cards.Count);
         card.transform.parent = transform;
 
-        Vector3 position = _hostelStartPoint.position + Vector3.up * (_cards.Count - 1) * _cardsHeightDifference;
-        card.transform.DOComplete();
-        card.transform.DOMove(position, 0.5f).SetEase(Ease.OutSine);
+        PlaceAllCards();
 
         SetOrdersInLayer();
         
+        GameManager.Instance.UI.SetPreview(true,  card.Data, Color.white);
         await Task.Delay(500);
-        await CheckCardsHostelConditions();
+        if (checkCondition)
+        {
+            await CheckCardsHostelConditions();
+        }
+        GameManager.Instance.UI.SetPreview(false);
     }
     
     public void RemoveCard(Card card)
@@ -42,15 +47,11 @@ public class Hostel : MonoBehaviour
     {
         Card[] cardArray = _cards.ToArray();
         
-        float heightDifference = _cardsHeightDifference;
-        if (cardArray.Length > 7)
-        {
-            heightDifference *= 0.75f;
-        }
-        
+        float heightDifference = _cardsHeightDifference; 
         for (int i = 0; i < _cards.Count; i++)
         {
             Vector3 position = _hostelStartPoint.position + Vector3.up * i * heightDifference;
+            position += i%2 ==0 ? Vector3.right * 0.5f : -Vector3.right * 0.5f;
             
             cardArray[i].SetOrderInLayer(_cards.Count-i);
             cardArray[i].transform.DOComplete();
@@ -66,11 +67,43 @@ public class Hostel : MonoBehaviour
             cardArray[i].SetOrderInLayer(_cards.Count-i);
         }
     }
+    
+    public async Task CheckCardsBarConditions(BadHabitType badHabit)
+    {
+        Debug.Log("check bar conditions");
+     
+        GameManager.Instance.CanPlayerMakeAction = false;
+
+        await Task.Delay(1000);
+        
+        for (int i = _cards.Count - 1; i >= 0; i--)
+        {
+            var card = _cards[i];
+            
+            card.transform.DOComplete();
+            card.transform.DOPunchScale(Vector3.one * 0.2f, 0.35f);
+
+            await Task.Delay(100);
+            
+            if (card.Data.BarCondition == BadHabitType.None) continue;
+
+            if (badHabit == card.Data.BarCondition)
+            {
+                await MakeCardLeave(card, i);
+                break;
+            }
+        }
+        
+        await Task.Delay(1000);
+        
+        GameManager.Instance.CanPlayerMakeAction = true;
+    }
 
     private async Task CheckCardsHostelConditions()
     {
         Debug.Log("check hostel conditions");
-        
+        GameManager.Instance.CanPlayerMakeAction = false;
+
         for (int i = _cards.Count - 1; i >= 0; i--)
         {
             var card = _cards[i];
@@ -90,13 +123,13 @@ public class Hostel : MonoBehaviour
         await Task.Delay(1000);
         
         Debug.Log("end hostel");
+        GameManager.Instance.CanPlayerMakeAction = true;
         GameManager.Instance.EndHostelTurn();
     }
 
     private async Task MakeCardLeave(Card card, int floor)
     {
         GameManager.Instance.UI.SetPreview(true, card.Data, Color.red);
-        GameManager.Instance.CanPlayerMakeAction = false;
         Debug.Log("false");
         await Task.Delay(1000);
 
@@ -176,12 +209,12 @@ public class Hostel : MonoBehaviour
             case LeaveWithCondition.DrawFromTankToTopOfHostel:
                 var c2 = tank.GetRandomCard();
                 c2.CanBePreviewed = true;
-                tank.PlaceCardInHostel(c2, this);
+                tank.PlaceCardInHostel(c2, this, false);
                 await Task.Delay(1000);
                 break;
             case LeaveWithCondition.DrawFromBarToTopOfHostel:
                 var c3 = bar.GetRandomCard();
-                bar.PlaceCardInHostel(c3, this);
+                bar.PlaceCardInHostel(c3, this, true);
                 await Task.Delay(1000);
                 break;
             case LeaveWithCondition.DrawFirstInBarToCardHostelFlor:
@@ -204,6 +237,8 @@ public class Hostel : MonoBehaviour
         {
             card.LeaveFromHostel(true);
         }
+
+        GameManager.Instance.AddLeaveClient();
         _cards.Remove(card);
         PlaceAllCards();
 
@@ -225,7 +260,6 @@ public class Hostel : MonoBehaviour
         PlaceAllCards();
         await Task.Delay(1000);
 
-        GameManager.Instance.CanPlayerMakeAction = true;
         Debug.Log("true");
         GameManager.Instance.UI.SetPreview(false, null, Color.white);
     }
@@ -381,32 +415,5 @@ public class Hostel : MonoBehaviour
                 return value > amount;
         }
         throw new ArgumentOutOfRangeException($"{value} {@operator} {amount}");
-    }
-
-    public async Task CheckCardsBarConditions(BadHabitType badHabit)
-    {
-        Debug.Log("check bar conditions");
-        
-        await Task.Delay(1000);
-        
-        for (int i = _cards.Count - 1; i >= 0; i--)
-        {
-            var card = _cards[i];
-            
-            card.transform.DOComplete();
-            card.transform.DOPunchScale(Vector3.one * 0.2f, 0.35f);
-
-            await Task.Delay(100);
-            
-            if (card.Data.BarCondition == BadHabitType.None) continue;
-
-            if (badHabit == card.Data.BarCondition)
-            {
-                await MakeCardLeave(card, i);
-                break;
-            }
-        }
-        
-        await Task.Delay(1000);
     }
 }

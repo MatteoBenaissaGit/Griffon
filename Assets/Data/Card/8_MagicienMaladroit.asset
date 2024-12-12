@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 8_MagicienMaladroit
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Le Magicien Maladroit
-  <Sprite>k__BackingField: {fileID: 21300000, guid: b4e8e4574bc32be4fa4746b34411b784, type: 3}
+  <Sprite>k__BackingField: {fileID: 21300000, guid: 32f1b714fd0f06b4fb4a4b544764eed4, type: 3}
   <Consumption>k__BackingField: 1
   <BadHabit>k__BackingField: 2
   <BadHabitAmount>k__BackingField: 1

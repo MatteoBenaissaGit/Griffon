@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 18_NainSaoul
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Le Nain Saoul
-  <Sprite>k__BackingField: {fileID: 21300000, guid: 0aa22e5c5b287884782d26858c8c07c0, type: 3}
+  <Sprite>k__BackingField: {fileID: 21300000, guid: 955f77c6df94e374dbb5172b79d77a2d, type: 3}
   <Consumption>k__BackingField: 1
   <BadHabit>k__BackingField: 0
   <BadHabitAmount>k__BackingField: 1
